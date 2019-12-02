@@ -1,5 +1,6 @@
 import express from 'express'
 import { initialize } from 'express-openapi' // eslint-disable-line no-unused-vars
+import swaggerUi from 'swagger-ui-express'
 import { join } from 'path'
 import fs from 'fs'
 import cors from 'cors'
@@ -34,5 +35,18 @@ export default async function initAPI (dependencies) {
     dependencies,
     operations
   })
+  var options = {
+    explorer: true,
+    swaggerOptions: {
+      urls: [
+        {
+          url: '/api/v1/api-docs',
+          name: 'Version 1'
+        }
+      ]
+    }
+  }
+
+  app.use('/', swaggerUi.serve, swaggerUi.setup(null, options))
   return app
 }
