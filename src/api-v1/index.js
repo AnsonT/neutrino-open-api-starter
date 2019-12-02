@@ -1,5 +1,7 @@
 import express from 'express'
 import { initialize } from 'express-openapi' // eslint-disable-line no-unused-vars
+import cors from 'cors'
+import bodyParser from 'body-parser'
 import apiDoc from './api-doc.yml'
 
 function reqOperations (context) {
@@ -12,9 +14,12 @@ export default async function initAPI (dependencies) {
   const operations = reqOperations(operationsContext)
 
   const app = express()
+  app.use(cors())
+  app.use(bodyParser.json())
   initialize({
     app,
     apiDoc,
+    exposeApiDocs: true,
     dependencies,
     operations
   })
