@@ -6,6 +6,7 @@
   "scripts": {
     "test": "NODE_CONFIG_ENV=test jest",
     "start": "webpack --watch --mode development",
+    "debug": "node --inspect node_modules/.bin/webpack --watch --mode development",
     "build": "webpack --mode production",
     "lint": "eslint --cache --format codeframe --ext mjs,js src test"
   },
