@@ -4,7 +4,7 @@
   "description": "",
   "main": "build/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "NODE_CONFIG_ENV=test jest",
     "start": "webpack --watch --mode development",
     "build": "webpack --mode production",
     "lint": "eslint --cache --format codeframe --ext mjs,js src test"
@@ -21,8 +21,10 @@
     "jest": "^24.9.0",
     "js-yaml-loader": "^1.2.2",
     "neutrino": "^9.0.0-rc.5",
+    "supertest": "^4.0.2",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "yaml-jest": "^1.0.5"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

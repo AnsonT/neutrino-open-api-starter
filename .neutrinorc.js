@@ -17,7 +17,12 @@ module.exports = {
   use: [
     standard(),
     node(),
-    jest(),
+    jest({
+      'moduleFileExtensions': ['yaml', 'yml'],
+      'transform': {
+        '\\.y?ml$': 'yaml-jest'
+      }
+    }),
     ymlLoader,
   ],
 };
