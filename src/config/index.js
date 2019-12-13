@@ -13,8 +13,8 @@ dotenv.config({ path: envPath })
 const config = convict({
   env: {
     doc: 'The application configuration environment',
-    format: ['production', 'ote', 'test', 'development'],
-    default: env,
+    format: ['production', 'ote', 'test', 'unittest', 'development'],
+    default: 'development',
     env: 'NODE_CONFIG_ENV'
   },
   ...schema

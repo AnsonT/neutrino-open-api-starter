@@ -7,9 +7,9 @@ module.exports = {
     connection: {
       filename: './dev.sqlite3'
     },
+    useNullAsDefault: true,
     pool: {
       afterCreate: (conn, cb) => {
-        console.log('--------------->')
         conn.run('PRAGMA foreign_keys = ON', cb)
       }
     }

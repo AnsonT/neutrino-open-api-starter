@@ -1,4 +1,8 @@
+import Query from '.'
+
 export async function dbCreateUser (userName, email) {
+  const q = new Query()
+  await q.insert({ userName, email })
 }
 
 export async function dbCreateLogin (userNameOrId, password) {

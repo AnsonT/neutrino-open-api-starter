@@ -5,6 +5,7 @@ export async function registerUser (req, res) {
   const { userName, email } = req.body
   try {
     await dbCreateUser(userName, email)
+    res.send('OK')
   } catch (e) {
     errorResponse(res, e)
   }
@@ -17,6 +18,7 @@ export async function loginUser (req, res) {
     if (userId) {
       await dbLoginAttempt(userId, success)
     }
+    res.send('OK')
   } catch (e) {
     errorResponse(res, e)
   }
@@ -29,6 +31,7 @@ export async function changePassword (req, res) {
     if (success) {
       await dbChangePassword(userId, newPassword)
     }
+    res.send('OK')
   } catch (e) {
     errorResponse(res, e)
   }
@@ -36,6 +39,7 @@ export async function changePassword (req, res) {
 
 export async function getUser (req, res) {
   try {
+    res.send('OK')
   } catch (e) {
     errorResponse(res, e)
   }
@@ -43,6 +47,7 @@ export async function getUser (req, res) {
 
 export async function getUsers (req, res) {
   try {
+    res.send('OK')
   } catch (e) {
     errorResponse(res, e)
   }
@@ -50,6 +55,7 @@ export async function getUsers (req, res) {
 
 export async function updateUser (req, res) {
   try {
+    res.send('OK')
   } catch (e) {
     errorResponse(res, e)
   }
@@ -57,6 +63,7 @@ export async function updateUser (req, res) {
 
 export async function deleteUser (req, res) {
   try {
+    res.send('OK')
   } catch (e) {
     errorResponse(res, e)
   }
