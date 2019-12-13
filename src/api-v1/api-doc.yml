@@ -4,10 +4,135 @@ info:
   version: '3'
 basePath: '/v1'
 paths:
-  /foo:
-    get:
-      operationId: getFoo
+
+  /login:
+    post:
+      operationId: loginUser
       responses:
-        default:
-          description: return foo
-          schema: {}
+        200:
+          description: OK
+
+  /users:
+    get:
+      operationId: getUsers
+      responses:
+        200:
+          description: OK
+    post:
+      operationId: registerUser
+      responses:
+        201:
+          description: CREATED
+  /users/{userIdOrName}:
+    get:
+      operationId: getUser
+      parameters:
+      - in: path
+        name: userIdOrName
+        type: string
+        required: true
+      responses:
+        200:
+          description: OK
+    patch:
+      operationId: updateUser
+      parameters:
+      - in: path
+        name: userIdOrName
+        type: string
+        required: true
+      responses:
+        200:
+          description: OK
+    delete:
+      operationId: deleteUser
+      parameters:
+      - in: path
+        name: userIdOrName
+        type: string
+        required: true
+      responses:
+        200:
+          description: OK
+
+  /users/{userIdOrName}/roles:
+    get:
+      operationId: getUserRoles
+      parameters:
+      - in: path
+        name: userIdOrName
+        type: string
+        required: true
+      responses:
+        200:
+          description: OK
+    post:
+      operationId: addUserRole
+      parameters:
+      - in: path
+        name: userIdOrName
+        type: string
+        required: true
+      responses:
+        201:
+          description: CREATED
+
+  /users/{userIdOrName}/roles/{roleIdOrName}:
+    delete:
+      operationId: deleteUserRole
+      parameters:
+      - in: path
+        name: userIdOrName
+        type: string
+        required: true
+      - in: path
+        name: roleIdOrName
+        type: string
+        required: true
+      responses:
+        200:
+          description: OK
+
+  /roles:
+    get:
+      operationId: getRoles
+      responses:
+        200:
+          description: OK
+    post:
+      operationId: addRole
+      responses:
+        201:
+          description: CREATED
+
+  /roles/{roleIdOrName}:
+    get:
+      operationId: getRole
+      parameters:
+      - in: path
+        name: roleIdOrName
+        type: string
+        required: true
+      responses:
+        200:
+          description: OK
+    patch:
+      operationId: updateRole
+      parameters:
+      - in: path
+        name: roleIdOrName
+        type: string
+        required: true
+      responses:
+        200:
+          description: OK
+    delete:
+      operationId: deleteRole
+      parameters:
+      - in: path
+        name: roleIdOrName
+        type: string
+        required: true
+      responses:
+        200:
+          description: OK
