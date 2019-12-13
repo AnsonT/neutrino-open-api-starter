@@ -26,6 +26,7 @@ export default async function initAPI (dependencies) {
   const operations = getOperations()
 
   const app = express()
+  app.disable('x-powered-by')
   app.use(cors())
   app.use(bodyParser.json())
   initialize({
