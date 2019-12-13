@@ -14,7 +14,7 @@ const config = convict({
   env: {
     doc: 'The application configuration environment',
     format: ['production', 'ote', 'test', 'unittest', 'development'],
-    default: 'development',
+    default: env,
     env: 'NODE_CONFIG_ENV'
   },
   ...schema
