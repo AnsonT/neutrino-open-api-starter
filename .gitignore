@@ -107,4 +107,4 @@ dist
 build
 
 .history
-*.sqlite
+*.sqlite3
