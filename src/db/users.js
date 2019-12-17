@@ -47,6 +47,31 @@ export async function dbVerifyLogin (tx, userName, password, loginIp) {
   return { success: false }
 }
 
+export async function dbGetLastLoginAttempts (tx, userId) {
+  const lastSuccess = await tx
+    .select()
+    .from('loginAttempts')
+    .where({ userId, success: true })
+    .orderBy('loginAt', 'desc')
+    .first()
+  const lastFailure = await tx
+    .select()
+    .from('loginAttempts')
+    .where({ userId, success: false })
+    .orderBy('loginAt', 'desc')
+    .first()
+  return {
+    lastSuccess: {
+      loginAt: new Date(lastSuccess.loginAt),
+      loginIp: lastSuccess.loginIp || ''
+    },
+    lastFailure: {
+      loginAt: new Date(lastFailure.loginAt),
+      loginIp: lastFailure.loginIp || ''
+    }
+  }
+}
+
 export async function dbChangePassword (tx, userId, password) {
 }
 

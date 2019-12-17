@@ -1,5 +1,5 @@
 import { Query, transaction } from '../../db'
-import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbChangePassword, dbCreateLogin } from '../../db/users'
+import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbChangePassword, dbCreateLogin, dbGetLastLoginAttempts } from '../../db/users'
 import { errorResponse } from '../../utils/error'
 
 export async function registerUser (req, res) {
@@ -20,8 +20,13 @@ export async function loginUser (req, res) {
   try {
     const q = new Query()
     const { userId, success } = await dbVerifyLogin(q, userName, password)
+    const attempts = success ? await dbGetLastLoginAttempts(q, userId) : {}
     userId && dbLoginAttempt(q, userId, success)
-    res.send({ userId: success ? userId : undefined, success })
+    res.send({
+      userId: success ? userId : undefined,
+      success,
+      ...attempts
+    })
   } catch (e) {
     errorResponse(res, e)
   }
