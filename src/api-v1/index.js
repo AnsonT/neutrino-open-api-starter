@@ -5,7 +5,9 @@ import { join } from 'path'
 import fs from 'fs'
 import cors from 'cors'
 import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
 import apiDoc from './api-doc.yml'
+import { authMiddleware } from '../utils/auth'
 
 function getOperations () {
   let req = null
@@ -29,6 +31,8 @@ export default async function initAPI (dependencies) {
   app.disable('x-powered-by')
   app.use(cors())
   app.use(bodyParser.json())
+  app.use(cookieParser())
+  app.use(authMiddleware())
   initialize({
     app,
     apiDoc,

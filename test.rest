@@ -1,4 +1,4 @@
-@host=http://127.0.0.1:3000
+@host=http://example.localhost:3000
 ###
 {{host}}/api/v1/users
 
@@ -18,5 +18,15 @@ Content-Type: application/json
 
 {
   "userName": "AnsonT",
-  "password": "passoword"
+  "password": "password"
+}
+
+###
+PATCH {{host}}/api/v1/login
+Content-Type: application/json
+
+{
+  "userName": "AnsonT",
+  "oldPassword": "password2",
+  "newPassword": "password"
 }

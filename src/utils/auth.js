@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import _ from 'lodash'
 import config from '../config'
 
 export function setJwtCookie (req, res, userId, userName, roles) {
@@ -21,4 +22,26 @@ export function setJwtCookie (req, res, userId, userName, roles) {
       httpOnly: true,
       secure: req.secure
     })
+}
+
+function validateAuth (authHeader, authJwt) {
+  const token = _.get(authHeader?.match(/^[Bb]earer\W+(.*)$/), 1, authJwt)
+  if (token) {
+    try {
+      const auth = jwt.verify(token, config.auth.jwtSecret)
+      return auth
+    } catch (e) {
+      console.debug(e)
+    }
+  }
+  return {}
+}
+
+export function authMiddleware () {
+  return (req, res, next) => {
+    const authHeader = req.headers.authorization
+    const authJwt = req.cookies[config.auth.jwtCookie]
+    req.auth = validateAuth(authHeader, authJwt)
+    next()
+  }
 }
