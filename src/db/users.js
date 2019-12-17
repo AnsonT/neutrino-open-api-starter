@@ -33,6 +33,7 @@ export async function dbCreateLogin (tx, userNameOrId, password) {
 }
 
 export async function dbVerifyLogin (tx, userName, password, loginIp) {
+  // TODO: Check for blacklisted loginIP
   const user = await dbGetUser(tx, userName)
   if (user) {
     const { userId } = user
@@ -70,9 +71,6 @@ export async function dbGetLastLoginAttempts (tx, userId) {
       loginIp: lastFailure?.loginIp || (lastFailure ? '' : undefined)
     }
   }
-}
-
-export async function dbChangePassword (tx, userId, password) {
 }
 
 export async function dbLoginAttempt (tx, userId, success, loginIp) {

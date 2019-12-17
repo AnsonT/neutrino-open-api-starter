@@ -1,6 +1,6 @@
 import requestIp from 'request-ip'
 import { Query, transaction } from '../../db'
-import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbChangePassword, dbCreateLogin, dbGetLastLoginAttempts } from '../../db/users'
+import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbCreateLogin, dbGetLastLoginAttempts } from '../../db/users'
 import { errorResponse } from '../../utils/error'
 
 export async function registerUser (req, res) {
@@ -38,11 +38,15 @@ export async function changePassword (req, res) {
   const { userName, oldPassword, newPassword } = req.body
   try {
     const q = new Query()
-    const { userId, success } = await dbVerifyLogin(q, userName, oldPassword)
+    const loginIp = requestIp.getClientIp(req)
+    const { userId, success } = await dbVerifyLogin(q, userName, oldPassword, loginIp)
     if (success) {
-      await dbChangePassword(q, userId, newPassword)
+      await dbCreateLogin(q, userName, newPassword)
+      res.send({ success: true })
+    } else {
+      userId && dbLoginAttempt(q, userId, false, loginIp)
+      res.status(401).send('Not authorized')
     }
-    res.send('OK')
   } catch (e) {
     errorResponse(res, e)
   }

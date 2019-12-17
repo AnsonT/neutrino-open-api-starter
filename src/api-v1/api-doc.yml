@@ -11,6 +11,13 @@ paths:
       responses:
         200:
           description: OK
+    patch:
+      operationId: changePassword
+      responses:
+        200:
+          description: OK
+        401:
+          description: NOTAUTHORIZED
 
   /users:
     get:
