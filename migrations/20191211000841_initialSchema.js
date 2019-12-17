@@ -35,6 +35,7 @@ exports.up = async function (knex) {
   await knex.schema.createTable('usersRoles', (table) => {
     table.uuid('userId').notNullable()
     table.uuid('roleId').notNullable()
+    table.datetime('createdAt')
     table.primary(['userId', 'roleId'])
     table.index(['userId', 'roleId'])
     table.foreign('userId').references('userId').inTable('users')
