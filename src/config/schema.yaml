@@ -20,3 +20,30 @@ db:
     doc: 'password'
     default: 'password'
     sensitive: true
+
+auth:
+  defaultRole:
+    doc: default role for new user
+    default: user
+    env: AUTH_DEFAULT_ROLE
+  jwtIssuer:
+    doc: issuer of jwt
+    default: example.localhost
+    env: AUTH_JWT_ISSUER
+  jwtSecret:
+    doc: jwt secret
+    default: Don'tUseThis
+    env: AUTH_JWT_SECRET
+    sensitive: true
+  jwtCookieDomain:
+    doc: jwt cookie domain
+    default: example.localhost
+    env: AUTH_JWT_DOMAIN
+  jwtCookie:
+    doc: jwt cookie name
+    default: auth_jwt
+    env: AUTH_JWT_COOKIE
+  jwtExpiresIn:
+    doc: jwt expiration duration
+    default: 1h
+    env: AUTH_JWT_EXPIRES_IN

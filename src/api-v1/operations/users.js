@@ -1,18 +1,19 @@
 import requestIp from 'request-ip'
-import _ from 'lodash'
 import { Query, transaction } from '../../db'
 import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbCreateLogin, dbGetLastLoginAttempts } from '../../db/users'
 import { dbAssignRole, dbGetUserRoles } from '../../db/roles'
 import { errorResponse } from '../../utils/error'
+import config from '../../config'
+import { setJwtCookie } from '../../utils/auth'
 
 export async function registerUser (req, res) {
   const { userName, email, password } = req.body
   try {
     await transaction(async (tx) => {
       await dbCreateUser(tx, userName, email)
-      const login = await dbCreateLogin(tx, userName, password)
-      const { userId } = login
-      await dbAssignRole(tx, login.userId, 'user')
+      const { userId } = await dbCreateLogin(tx, userName, password)
+      const roleName = config.auth.defaultRole
+      await dbAssignRole(tx, userId, roleName)
       res.send({ userId })
     })
   } catch (e) {
@@ -29,12 +30,16 @@ export async function loginUser (req, res) {
     const { userId, success } = await dbVerifyLogin(q, userName, password, loginIp)
     const attempts = success ? await dbGetLastLoginAttempts(q, userId) : {}
     userId && dbLoginAttempt(q, userId, success, loginIp)
-    const roles = await dbGetUserRoles(q, userId)
+    let roles = success && await dbGetUserRoles(q, userId)
+    roles = roles ? roles.map(role => role.roleName) : undefined
+    if (success) {
+      setJwtCookie(req, res, userId, userName, roles)
+    }
     res.send({
       userId: success ? userId : undefined,
       success,
       ...attempts,
-      roles: roles.map(role => role.roleName)
+      roles
     })
   } catch (e) {
     errorResponse(res, e)
