@@ -47,3 +47,22 @@ auth:
     doc: jwt expiration duration
     default: 1h
     env: AUTH_JWT_EXPIRES_IN
+
+email:
+  smtpHost:
+    doc: email SMTP host
+    default: smtp.gmail.com
+    env: EMAIL_SMTP_HOST
+  smtpPort:
+    doc: email SMTP port
+    default: 587
+    env: EMAIL_SMTP_PORT
+  smtpUser:
+    doc: SMTP account user
+    default: user
+    env: EMAIL_SMTP_USER
+  smtpPassword:
+    doc: SMTP account password
+    default: Don'tUseThis
+    sensitive: true
+    env: EMAIL_SMTP_PASSWORD
