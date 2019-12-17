@@ -1,3 +1,13 @@
 @host=http://127.0.0.1:3000
 ###
 {{host}}/api/v1/users
+
+###
+POST {{host}}/api/v1/users
+Content-Type: application/json
+
+{
+  "userName": "AnsonT",
+  "email": "test@ansont.me",
+  "password": "password"
+}

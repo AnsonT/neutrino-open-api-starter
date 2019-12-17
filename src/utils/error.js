@@ -26,6 +26,7 @@ export class HttpUnauthenticated extends HttpError {
 }
 
 export function errorResponse (res, error) {
+  console.error(error)
   if (error instanceof HttpError) {
     return res.status(error.status).send({
       code: error.code,

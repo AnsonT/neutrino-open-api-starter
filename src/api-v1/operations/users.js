@@ -1,11 +1,15 @@
-import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbChangePassword } from '../../db/users'
+import { transaction } from '../../db'
+import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbChangePassword, dbCreateLogin } from '../../db/users'
 import { errorResponse } from '../../utils/error'
 
 export async function registerUser (req, res) {
-  const { userName, email } = req.body
+  const { userName, email, password } = req.body
   try {
-    await dbCreateUser(userName, email)
-    res.send('OK')
+    await transaction(async (tx) => {
+      await dbCreateUser(tx, userName, email)
+      const login = await dbCreateLogin(tx, userName, password)
+      res.send(login)
+    })
   } catch (e) {
     errorResponse(res, e)
   }

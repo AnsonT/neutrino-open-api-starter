@@ -10,3 +10,8 @@ export function Query () {
   }
   return Query.pool
 }
+
+export function transaction (callback) {
+  const q = new Query()
+  return q.transaction(callback)
+}
