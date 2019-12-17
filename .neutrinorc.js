@@ -1,6 +1,7 @@
 const standard = require('@neutrinojs/standardjs');
 const node = require('@neutrinojs/node');
 const jest = require('@neutrinojs/jest');
+const babelMerge = require('babel-merge');
 
 function ymlLoader (neutrino) {
   neutrino.config.module
@@ -8,6 +9,24 @@ function ymlLoader (neutrino) {
     .test(/\.(yml|yaml)$/)
     .use('yml')
       .loader(require.resolve('js-yaml-loader'))
+}
+
+function babelLoader (neutrino) {
+  neutrino.config.module
+  .rule('compile')
+  .use('babel')
+  .tap(options =>
+    babelMerge(
+      {
+        plugins: [
+          require.resolve('@babel/plugin-proposal-optional-chaining'),
+        ],
+      },
+      options,
+    ),
+  );
+
+
 }
 
 module.exports = {
@@ -24,5 +43,6 @@ module.exports = {
       }
     }),
     ymlLoader,
+    babelLoader,
   ],
 };
