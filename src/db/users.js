@@ -62,12 +62,12 @@ export async function dbGetLastLoginAttempts (tx, userId) {
     .first()
   return {
     lastSuccess: {
-      loginAt: new Date(lastSuccess.loginAt),
-      loginIp: lastSuccess.loginIp || ''
+      loginAt: lastSuccess && new Date(lastSuccess.loginAt),
+      loginIp: lastSuccess?.loginIp || (lastSuccess ? '' : undefined)
     },
     lastFailure: {
-      loginAt: new Date(lastFailure.loginAt),
-      loginIp: lastFailure.loginIp || ''
+      loginAt: lastFailure && new Date(lastFailure.loginAt),
+      loginIp: lastFailure?.loginIp || (lastFailure ? '' : undefined)
     }
   }
 }

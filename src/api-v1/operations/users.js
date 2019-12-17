@@ -1,3 +1,4 @@
+import requestIp from 'request-ip'
 import { Query, transaction } from '../../db'
 import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbChangePassword, dbCreateLogin, dbGetLastLoginAttempts } from '../../db/users'
 import { errorResponse } from '../../utils/error'
@@ -19,9 +20,10 @@ export async function loginUser (req, res) {
   const { userName, password } = req.body
   try {
     const q = new Query()
-    const { userId, success } = await dbVerifyLogin(q, userName, password)
+    const loginIp = requestIp.getClientIp(req)
+    const { userId, success } = await dbVerifyLogin(q, userName, password, loginIp)
     const attempts = success ? await dbGetLastLoginAttempts(q, userId) : {}
-    userId && dbLoginAttempt(q, userId, success)
+    userId && dbLoginAttempt(q, userId, success, loginIp)
     res.send({
       userId: success ? userId : undefined,
       success,
