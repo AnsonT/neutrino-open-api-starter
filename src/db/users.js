@@ -6,18 +6,21 @@ export async function dbCreateUser (tx, userName, email, emailVerified = false, 
   const createdAt = Date.now()
   const modifiedAt = createdAt
   await tx
-    .insert({ userId, userName, email, emailVerified, needNewPassword, createdAt, modifiedAt })
+    .insert({
+      userId,
+      userName: userName.toLowerCase(),
+      email,
+      emailVerified,
+      needNewPassword,
+      createdAt,
+      modifiedAt
+    })
     .into('users')
   return { userId }
 }
 
 export async function dbCreateLogin (tx, userNameOrId, password) {
-  const user = await tx
-    .select()
-    .from('users')
-    .where({ userId: userNameOrId })
-    .orWhere({ userName: userNameOrId })
-    .first()
+  const user = await dbGetUser(tx, userNameOrId)
   const createdAt = Date.now()
   const { userId } = user
   const salt = bcrypt.genSaltSync(10)
@@ -29,20 +32,42 @@ export async function dbCreateLogin (tx, userNameOrId, password) {
   return { loginId, userId }
 }
 
-export async function dbVerifyLogin (userName, password) {
+export async function dbVerifyLogin (tx, userName, password, loginIp) {
+  const user = await dbGetUser(tx, userName)
+  if (user) {
+    const { userId } = user
+    const login = await tx.select().from('logins')
+      .where({ userId })
+      .orderBy('createdAt', 'desc')
+      .first()
+    const { passwordHash } = login
+    const success = bcrypt.compareSync(password, passwordHash)
+    return { userId, success }
+  }
+  return { success: false }
 }
 
-export async function dbChangePassword (userId, password) {
+export async function dbChangePassword (tx, userId, password) {
 }
 
-export async function dbLoginAttempt (userId, success, loginIp) {
+export async function dbLoginAttempt (tx, userId, success, loginIp) {
+  const loginAt = Date.now()
+  return tx
+    .insert({ userId, success, loginIp, loginAt })
+    .into('loginAttempts')
 }
 
-export async function dbGetUser (userNameOrId) {
+export async function dbGetUser (tx, userNameOrId) {
+  return tx
+    .select()
+    .from('users')
+    .where({ userId: userNameOrId })
+    .orWhere({ userName: userNameOrId.toLowerCase() })
+    .first()
 }
 
-export async function dbDeleteUser (userNameOrId) {
+export async function dbDeleteUser (tx, userNameOrId) {
 }
 
-export async function dbUpateUser (userNameOrId, { userName, email, emailVerified, needNewPassword }) {
+export async function dbUpateUser (tx, userNameOrId, { userName, email, emailVerified, needNewPassword }) {
 }
