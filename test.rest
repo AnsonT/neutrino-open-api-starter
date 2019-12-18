@@ -30,3 +30,6 @@ Content-Type: application/json
   "oldPassword": "password2",
   "newPassword": "password"
 }
+
+###
+{{host}}/api/v1/email/verify/ck4arlo9a000ik5sehc9y3xyc

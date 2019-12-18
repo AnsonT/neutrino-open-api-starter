@@ -6,6 +6,7 @@ import { errorResponse } from '../../utils/error'
 import config from '../../config'
 import { setJwtCookie } from '../../utils/auth'
 import { sendMail } from '../../utils/email'
+import { dbRequestEmailVerification, dbVerifyEmail } from '../../db/email'
 
 export async function registerUser (req, res) {
   const { userName, email, password } = req.body
@@ -15,7 +16,8 @@ export async function registerUser (req, res) {
       const { userId } = await dbCreateLogin(tx, userName, password)
       const roleName = config.auth.defaultRole
       await dbAssignRole(tx, userId, roleName)
-      res.send({ userId })
+      const { verificationId } = await dbRequestEmailVerification(tx, userId, email)
+      res.send({ userId, verificationId })
     })
   } catch (e) {
     // TODO: Better error message, interpreted from DB errors
@@ -29,11 +31,13 @@ export async function loginUser (req, res) {
     const q = new Query()
     const loginIp = requestIp.getClientIp(req)
     const { userId, success } = await dbVerifyLogin(q, userName, password, loginIp)
-    const attempts = success ? await dbGetLastLoginAttempts(q, userId) : {}
-    userId && dbLoginAttempt(q, userId, success, loginIp)
-    let roles = success && await dbGetUserRoles(q, userId)
-    roles = roles ? roles.map(role => role.roleName) : undefined
-    if (success) {
+    let attempts = {}
+    let roles
+    if (success && userId) {
+      attempts = await dbGetLastLoginAttempts(q, userId)
+      dbLoginAttempt(q, userId, success, loginIp)
+      roles = await dbGetUserRoles(q, userId)
+      roles = roles?.map(role => role.roleName) || undefined
       setJwtCookie(req, res, userId, userName, roles)
     }
     res.send({
@@ -97,6 +101,20 @@ export async function updateUser (req, res) {
 export async function deleteUser (req, res) {
   try {
     res.send('OK')
+  } catch (e) {
+    errorResponse(res, e)
+  }
+}
+
+export async function verifyEmail (req, res) {
+  try {
+    const { verificationId } = req.params
+    const q = new Query()
+    const { success } = await dbVerifyEmail(q, verificationId)
+    if (!success) {
+      return res.status(404).send('NOTFOUND')
+    }
+    return res.send({ success })
   } catch (e) {
     errorResponse(res, e)
   }

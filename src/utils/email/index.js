@@ -38,12 +38,11 @@ async function emailTransporter () {
         pass
       }
     })
-
     emailTransporter.transporter.verify((error, success) => {
       if (error) {
         console.error(`Email transporter: ${error}`)
       } else {
-        console.log('Email transporter ready')
+        console.log(`Email service: ${service} ready`)
       }
     })
   }

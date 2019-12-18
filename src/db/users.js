@@ -1,7 +1,7 @@
 import cuid from 'cuid'
 import bcrypt from 'bcryptjs'
 
-export async function dbCreateUser (tx, userName, email, emailVerified = false, needNewPassword = false) {
+export async function dbCreateUser (tx, userName, email, emailVerifiedAt = null, needNewPassword = false) {
   const userId = cuid()
   const createdAt = Date.now()
   const modifiedAt = createdAt
@@ -10,7 +10,7 @@ export async function dbCreateUser (tx, userName, email, emailVerified = false, 
       userId,
       userName: userName.toLowerCase(),
       email,
-      emailVerified,
+      emailVerifiedAt,
       needNewPassword,
       createdAt,
       modifiedAt

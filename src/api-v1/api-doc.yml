@@ -19,6 +19,14 @@ paths:
         401:
           description: NOTAUTHORIZED
 
+  /email/verify/{verificationId}:
+    get:
+      operationId: verifyEmail
+      responses:
+        200:
+          description: OK
+        404:
+          description: NOTFOUND
   /users:
     get:
       operationId: getUsers
