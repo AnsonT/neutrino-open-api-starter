@@ -35,17 +35,19 @@
     "convict": "^5.2.0",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
-    "cuid": "^2.1.8",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-openapi": "^6.0.0",
     "helmet": "^3.21.2",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.20.4",
+    "lodash-uuid": "0.0.3",
     "moment": "^2.24.0",
     "nodemailer": "^6.4.2",
+    "pg": "^7.15.0",
     "request-ip": "^2.1.3",
     "sqlite3": "^4.1.1",
-    "swagger-ui-express": "^4.1.2"
+    "swagger-ui-express": "^4.1.2",
+    "uuid": "^3.3.3"
   }
 }

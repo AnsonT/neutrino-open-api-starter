@@ -1,9 +1,10 @@
-import cuid from 'cuid'
+import uuid from 'uuid/v4'
 import bcrypt from 'bcryptjs'
+import _ from 'lodash-uuid'
 
 export async function dbCreateUser (tx, userName, email, emailVerifiedAt = null, needNewPassword = false) {
-  const userId = cuid()
-  const createdAt = Date.now()
+  const userId = uuid()
+  const createdAt = new Date()
   const modifiedAt = createdAt
   await tx
     .insert({
@@ -21,11 +22,11 @@ export async function dbCreateUser (tx, userName, email, emailVerifiedAt = null,
 
 export async function dbCreateLogin (tx, userNameOrId, password) {
   const user = await dbGetUser(tx, userNameOrId)
-  const createdAt = Date.now()
+  const createdAt = new Date()
   const { userId } = user
   const salt = bcrypt.genSaltSync(10)
   const passwordHash = bcrypt.hashSync(password, salt)
-  const loginId = cuid()
+  const loginId = uuid()
   await tx
     .insert({ loginId, userId, passwordHash, createdAt })
     .into('logins')
@@ -74,19 +75,22 @@ export async function dbGetLastLoginAttempts (tx, userId) {
 }
 
 export async function dbLoginAttempt (tx, userId, success, loginIp) {
-  const loginAt = Date.now()
+  const loginAt = new Date()
   return tx
     .insert({ userId, success, loginIp, loginAt })
     .into('loginAttempts')
 }
 
 export async function dbGetUser (tx, userNameOrId) {
-  return tx
+  tx = tx
     .select()
     .from('users')
-    .where({ userId: userNameOrId })
-    .orWhere({ userName: userNameOrId.toLowerCase() })
-    .first()
+  if (_.isUuid(userNameOrId)) {
+    tx = tx.where({ userId: userNameOrId })
+  } else {
+    tx = tx.where({ userName: userNameOrId.toLowerCase() })
+  }
+  return tx.first()
 }
 
 export async function dbDeleteUser (tx, userNameOrId) {

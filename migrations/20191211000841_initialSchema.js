@@ -44,7 +44,7 @@ exports.up = async function (knex) {
   await knex.schema.createTable('emailVerifications', (table) => {
     table.uuid('verificationId').primary().notNullable()
     table.uuid('userId').notNullable()
-    table.uuid('email').notNullable()
+    table.string('email', 64).notNullable()
     table.datetime('expireAt').notNullable()
     table.datetime('verifiedAt')
     table.foreign('userId').references('userId').inTable('users')

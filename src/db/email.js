@@ -1,8 +1,8 @@
-import cuid from 'cuid'
+import uuid from 'uuid/v4'
 import moment from 'moment'
 
 export async function dbRequestEmailVerification (tx, userId, email) {
-  const verificationId = cuid()
+  const verificationId = uuid()
   const expireAt = moment().add(4, 'h').toDate()
   email = email.toLowerCase()
   await tx
@@ -20,11 +20,11 @@ export async function dbVerifyEmail (tx, verificationId) {
     .select()
     .from('emailVerifications')
     .where({ verificationId })
-    .where('expireAt', '>', Date.now())
+    .where('expireAt', '>', new Date())
     .first()
   if (verified) {
-    if (verified.verifiedAt) {
-      const verifiedAt = Date.now()
+    if (!verified.verifiedAt) {
+      const verifiedAt = new Date()
       await tx
         .where({ verificationId })
         .update({ verifiedAt })

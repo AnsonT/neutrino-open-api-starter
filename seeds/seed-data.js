@@ -4,7 +4,7 @@ exports.seed = function (knex) {
   return knex('roles').del()
     .then(function () {
       // Inserts seed entries
-      const createdAt = Date.now()
+      const createdAt = new Date()
       const modifiedAt = createdAt
       return knex('roles').insert([
         { roleId: '5df43e65-cfd0-445d-80ae-b66a255cd8c8', roleName: 'superuser', description: 'superuser', createdAt, modifiedAt },
