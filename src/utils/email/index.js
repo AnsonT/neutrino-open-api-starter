@@ -3,13 +3,14 @@ import config from '../../config'
 
 async function emailTransporter () {
   if (!emailTransporter.transporter) {
+    const service = config.email.service
     let host = config.email.smtpHost
     let port = config.email.smtpPort
     let user = config.email.smtpUser
     let pass = config.email.smtpPassword
     let secure = true
 
-    if (host === 'test') {
+    if (service === 'test') {
       const account = await new Promise((resolve, reject) => {
         nodeMailer.createTestAccount((err, account) => {
           if (err) {
@@ -28,6 +29,7 @@ async function emailTransporter () {
     }
 
     emailTransporter.transporter = nodeMailer.createTransport({
+      service,
       host,
       port,
       secure,

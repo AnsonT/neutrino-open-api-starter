@@ -49,17 +49,21 @@ auth:
     env: AUTH_JWT_EXPIRES_IN
 
 email:
+  service:
+    doc: nodemailer service
+    default: test
+    env: EMAIL_SERVICE
   smtpHost:
     doc: email SMTP host
-    default: test
+    default:
     env: EMAIL_SMTP_HOST
   smtpPort:
     doc: email SMTP port
-    default: 587
+    default:
     env: EMAIL_SMTP_PORT
   smtpUser:
     doc: SMTP account user
-    default: test
+    default:
     env: EMAIL_SMTP_USER
   smtpPassword:
     doc: SMTP account password
