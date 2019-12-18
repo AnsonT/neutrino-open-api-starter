@@ -47,3 +47,26 @@ auth:
     doc: jwt expiration duration
     default: 1h
     env: AUTH_JWT_EXPIRES_IN
+
+email:
+  service:
+    doc: nodemailer service
+    default: test
+    env: EMAIL_SERVICE
+  smtpHost:
+    doc: email SMTP host
+    default:
+    env: EMAIL_SMTP_HOST
+  smtpPort:
+    doc: email SMTP port
+    default:
+    env: EMAIL_SMTP_PORT
+  smtpUser:
+    doc: SMTP account user
+    default:
+    env: EMAIL_SMTP_USER
+  smtpPassword:
+    doc: SMTP account password
+    default: Don'tUseThis
+    sensitive: true
+    env: EMAIL_SMTP_PASSWORD

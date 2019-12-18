@@ -4,7 +4,7 @@ exports.up = async function (knex) {
     table.uuid('userId').primary().notNullable()
     table.string('userName', 64).unique().notNullable()
     table.string('email', 64)
-    table.boolean('emailVerified')
+    table.datetime('emailVerifiedAt')
     table.boolean('needNewPassword')
     table.datetime('createdAt')
     table.datetime('modifiedAt')
@@ -41,9 +41,18 @@ exports.up = async function (knex) {
     table.foreign('userId').references('userId').inTable('users')
     table.foreign('roleId').references('roleId').inTable('roles').onDelete('CASCADE')
   })
+  await knex.schema.createTable('emailVerifications', (table) => {
+    table.uuid('verificationId').primary().notNullable()
+    table.uuid('userId').notNullable()
+    table.string('email', 64).notNullable()
+    table.datetime('expireAt').notNullable()
+    table.datetime('verifiedAt')
+    table.foreign('userId').references('userId').inTable('users')
+  })
 }
 
 exports.down = async function (knex) {
+  await knex.schema.dropTableIfExists('emailVerifications')
   await knex.schema.dropTableIfExists('usersRoles')
   await knex.schema.dropTableIfExists('roles')
   await knex.schema.dropTableIfExists('loginAttempts')

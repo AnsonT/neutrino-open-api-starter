@@ -24,6 +24,18 @@ export function setJwtCookie (req, res, userId, userName, roles) {
     })
 }
 
+export function clearJwtCookie (req, res) {
+  res.cookie(
+    config.auth.jwtCookie,
+    '', {
+      domain: config.auth.jwtCookieDomain,
+      path: '/',
+      httpOnly: true,
+      secure: req.secure
+    }
+  )
+}
+
 function validateAuth (authHeader, authJwt) {
   const token = _.get(authHeader?.match(/^[Bb]earer\W+(.*)$/), 1, authJwt)
   if (token) {
