@@ -108,3 +108,4 @@ build
 
 .history
 *.sqlite3
+.debug
