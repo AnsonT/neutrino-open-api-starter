@@ -5,6 +5,7 @@ import { dbAssignRole, dbGetUserRoles } from '../../db/roles'
 import { errorResponse } from '../../utils/error'
 import config from '../../config'
 import { setJwtCookie } from '../../utils/auth'
+import { sendMail } from '../../utils/email'
 
 export async function registerUser (req, res) {
   const { userName, email, password } = req.body
@@ -74,7 +75,12 @@ export async function getUser (req, res) {
 
 export async function getUsers (req, res) {
   try {
-    res.send('OK')
+    const result = await sendMail({
+      to: 'tsaoa@acm.org',
+      subject: 'Blah Blah',
+      text: 'Whatever'
+    })
+    res.send(result)
   } catch (e) {
     errorResponse(res, e)
   }
