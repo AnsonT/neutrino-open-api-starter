@@ -4,7 +4,7 @@ import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbCreateLogin, dbGetLastLo
 import { dbAssignRole, dbGetUserRoles } from '../../db/roles'
 import { errorResponse } from '../../utils/error'
 import config from '../../config'
-import { setJwtCookie } from '../../utils/auth'
+import { setJwtCookie, clearJwtCookie } from '../../utils/auth'
 import { sendMail } from '../../utils/email'
 import { dbRequestEmailVerification, dbVerifyEmail } from '../../db/email'
 
@@ -39,6 +39,8 @@ export async function loginUser (req, res) {
       roles = await dbGetUserRoles(q, userId)
       roles = roles?.map(role => role.roleName) || undefined
       setJwtCookie(req, res, userId, userName, roles)
+    } else {
+      clearJwtCookie(req, res)
     }
     res.send({
       userId: success ? userId : undefined,
