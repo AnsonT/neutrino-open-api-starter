@@ -51,7 +51,7 @@ auth:
 email:
   smtpHost:
     doc: email SMTP host
-    default: smtp.gmail.com
+    default: test
     env: EMAIL_SMTP_HOST
   smtpPort:
     doc: email SMTP port
@@ -59,7 +59,7 @@ email:
     env: EMAIL_SMTP_PORT
   smtpUser:
     doc: SMTP account user
-    default: user
+    default: test
     env: EMAIL_SMTP_USER
   smtpPassword:
     doc: SMTP account password
