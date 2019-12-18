@@ -20,15 +20,15 @@ export async function dbCreateRole (tx, roleName, description) {
 }
 
 export async function dbGetRole (tx, roleNameOrId) {
-  tx = tx
+  const where = _.isUuid(roleNameOrId)
+    ? { roleId: roleNameOrId }
+    : { roleName: roleNameOrId.toLowerCase() }
+
+  return tx
     .select()
     .from('roles')
-  if (_.isUuid(roleNameOrId)) {
-    tx = tx.where({ roleId: roleNameOrId })
-  } else {
-    tx = tx.where({ roleName: roleNameOrId.toLowerCase() })
-  }
-  return tx.first()
+    .where(where)
+    .first()
 }
 
 export async function dbGetUserRoles (tx, userNameOrId) {

@@ -82,15 +82,14 @@ export async function dbLoginAttempt (tx, userId, success, loginIp) {
 }
 
 export async function dbGetUser (tx, userNameOrId) {
-  tx = tx
+  const where = _.isUuid(userNameOrId)
+    ? { userId: userNameOrId }
+    : { userName: userNameOrId.toLowerCase() }
+  return tx
     .select()
     .from('users')
-  if (_.isUuid(userNameOrId)) {
-    tx = tx.where({ userId: userNameOrId })
-  } else {
-    tx = tx.where({ userName: userNameOrId.toLowerCase() })
-  }
-  return tx.first()
+    .where(where)
+    .first()
 }
 
 export async function dbDeleteUser (tx, userNameOrId) {
