@@ -4,7 +4,6 @@ import config from '../config'
 
 export function setJwtCookie (req, res, userId, userName, roles) {
   const claims = {
-    userId,
     userName: userName.toLowerCase(),
     roles
   }
@@ -41,7 +40,8 @@ function validateAuth (authHeader, authJwt) {
   if (token) {
     try {
       const auth = jwt.verify(token, config.auth.jwtSecret)
-      return auth
+      console.debug(auth)
+      return { ...auth, userId: auth?.sub }
     } catch (e) {
       console.debug(e)
     }
@@ -54,6 +54,9 @@ export function authMiddleware () {
     const authHeader = req.headers.authorization
     const authJwt = req.cookies[config.auth.jwtCookie]
     req.auth = validateAuth(authHeader, authJwt)
+    if (!req.auth.userId && authJwt) {
+      clearJwtCookie(req, res)
+    }
     next()
   }
 }

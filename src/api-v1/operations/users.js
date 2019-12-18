@@ -33,9 +33,11 @@ export async function loginUser (req, res) {
     const { userId, success } = await dbVerifyLogin(q, userName, password, loginIp)
     let attempts = {}
     let roles
+    if (userId) {
+      dbLoginAttempt(q, userId, success, loginIp)
+    }
     if (success && userId) {
       attempts = await dbGetLastLoginAttempts(q, userId)
-      dbLoginAttempt(q, userId, success, loginIp)
       roles = await dbGetUserRoles(q, userId)
       roles = roles?.map(role => role.roleName) || undefined
       setJwtCookie(req, res, userId, userName, roles)
