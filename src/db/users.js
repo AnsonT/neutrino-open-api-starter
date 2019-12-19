@@ -1,6 +1,6 @@
 import uuid from 'uuid/v4'
 import bcrypt from 'bcryptjs'
-import _ from 'lodash-uuid'
+import isUUID from 'is-uuid'
 
 export async function dbCreateUser (tx, userName, email, emailVerifiedAt = null, needNewPassword = false) {
   const userId = uuid()
@@ -82,7 +82,7 @@ export async function dbLoginAttempt (tx, userId, success, loginIp) {
 }
 
 export async function dbGetUser (tx, userNameOrId) {
-  const where = _.isUuid(userNameOrId)
+  const where = isUUID.anyNonNil(userNameOrId)
     ? { userId: userNameOrId }
     : { userName: userNameOrId.toLowerCase() }
   return tx

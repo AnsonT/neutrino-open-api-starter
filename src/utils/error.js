@@ -7,21 +7,28 @@ export class HttpError extends Error {
   }
 }
 
+function mergeError (base, error) {
+  if (typeof error === 'string') {
+    return { ...base, message: error }
+  }
+  return { ...base, ...error }
+}
+
 export class HttpNotFound extends HttpError {
-  constructor () {
-    super(404, { code: 'NOTFOUND', message: 'Not Found' })
+  constructor (error) {
+    super(404, mergeError({ code: 'NOTFOUND', message: 'Not Found' }, error))
   }
 }
 
 export class HttpUnauthorized extends HttpError {
-  constructor () {
-    super(403, { code: 'FORBIDDEN', message: 'Forbidden' })
+  constructor (error) {
+    super(403, mergeError({ code: 'FORBIDDEN', message: 'Forbidden' }, error))
   }
 }
 
 export class HttpUnauthenticated extends HttpError {
-  constructor () {
-    super(401, { code: 'NOT_AUTHENTICATED', message: 'Not Authenticated' })
+  constructor (error) {
+    super(401, mergeError({ code: 'NOT_AUTHENTICATED', message: 'Not Authenticated' }, error))
   }
 }
 

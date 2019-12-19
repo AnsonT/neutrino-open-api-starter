@@ -42,6 +42,7 @@ export async function loginUser (req, res) {
       setJwtCookie(req, res, userId, userName, rolesAndPermissions)
     } else {
       clearJwtCookie(req, res)
+      throw new HttpUnauthorized('Invalid Username or Password')
     }
     res.send({
       userId: success ? userId : undefined,
@@ -65,7 +66,7 @@ export async function changePassword (req, res) {
       res.send({ success: true })
     } else {
       userId && dbLoginAttempt(q, userId, false, loginIp)
-      throw new HttpUnauthorized()
+      throw new HttpUnauthorized('Cannot change password, invalid Username or Password')
     }
   } catch (e) {
     errorResponse(res, e)
@@ -111,7 +112,7 @@ export async function verifyEmail (req, res) {
     const q = new Query()
     const { success } = await dbVerifyEmail(q, verificationId)
     if (!success) {
-      throw new HttpNotFound()
+      throw new HttpNotFound('Verification link not valid')
     }
     return res.send({ success })
   } catch (e) {

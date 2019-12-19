@@ -1,6 +1,6 @@
 import { dbGetUser } from './users'
 import _ from 'lodash'
-import 'lodash-uuid'
+import isUUID from 'is-uuid'
 import NodeCache from 'node-cache'
 
 export async function dbAssignRole (tx, userNameOrId, roleNameOrId) {
@@ -22,7 +22,7 @@ export async function dbCreateRole (tx, roleName, description) {
 }
 
 export async function dbGetRole (tx, roleNameOrId) {
-  const where = _.isUuid(roleNameOrId)
+  const where = isUUID.anyNonNil(roleNameOrId)
     ? { roleId: roleNameOrId }
     : { roleName: roleNameOrId.toLowerCase() }
 
@@ -66,8 +66,9 @@ export async function dbGetUserRolesAndPermissions (tx, userNameOrId) {
   const roles = await dbGetUserRoles(tx, userNameOrId)
   const rolesAndPermissions = await dbGetRolesAndPermissions(tx)
   const permissions = _.chain(roles)
-    .map(role => rolesAndPermissions[role.roleId].map(p => p.permission))
+    .map(role => rolesAndPermissions[role.roleId]?.map(p => p.permission))
     .flatten()
+    .compact()
     .uniq()
     .value()
   return { roles: roles.map(role => role.roleName), permissions }
