@@ -1,11 +1,12 @@
 import jwt from 'jsonwebtoken'
 import _ from 'lodash'
 import config from '../config'
+import { HttpUnauthenticated, HttpUnauthorized } from './error'
 
-export function setJwtCookie (req, res, userId, userName, roles) {
+export function setJwtCookie (req, res, userId, userName, rolesAndPermissions) {
   const claims = {
     userName: userName.toLowerCase(),
-    roles
+    ...rolesAndPermissions
   }
   const options = {
     expiresIn: config.auth.jwtExpiresIn,
@@ -40,7 +41,6 @@ function validateAuth (authHeader, authJwt) {
   if (token) {
     try {
       const auth = jwt.verify(token, config.auth.jwtSecret)
-      console.debug(auth)
       return { ...auth, userId: auth?.sub }
     } catch (e) {
       console.debug(e)
@@ -58,5 +58,19 @@ export function authMiddleware () {
       clearJwtCookie(req, res)
     }
     next()
+  }
+}
+
+export function hasPermissions (req, permissions) {
+  permissions = _.castArray(permissions)
+  return _.intersection(req.auth?.permissions, permissions).length > 0
+}
+
+export function assertPermissions (req, permissions) {
+  if (!req.auth?.userId) {
+    throw new HttpUnauthenticated()
+  }
+  if (!hasPermissions(req, 'usersViewer')) {
+    throw new HttpUnauthorized()
   }
 }

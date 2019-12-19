@@ -15,13 +15,13 @@ export class HttpNotFound extends HttpError {
 
 export class HttpUnauthorized extends HttpError {
   constructor () {
-    super(403, { code: 'NOTAUTHORIZED', message: 'Not Authorized' })
+    super(403, { code: 'FORBIDDEN', message: 'Forbidden' })
   }
 }
 
 export class HttpUnauthenticated extends HttpError {
   constructor () {
-    super(401, { code: 'NOTAUTHENTICATED', message: 'Not Auhtenticated' })
+    super(401, { code: 'NOT_AUTHENTICATED', message: 'Not Authenticated' })
   }
 }
 
@@ -33,7 +33,7 @@ export function errorResponse (res, error) {
       errno: error.errno,
       code: error.code,
       status: error.status,
-      error: error.status,
+      error: error.error,
       message: error.message
     })
   }
