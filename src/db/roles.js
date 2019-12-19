@@ -1,5 +1,7 @@
 import { dbGetUser } from './users'
-import _ from 'lodash-uuid'
+import _ from 'lodash'
+import 'lodash-uuid'
+import NodeCache from 'node-cache'
 
 export async function dbAssignRole (tx, userNameOrId, roleNameOrId) {
   const { userId } = await dbGetUser(tx, userNameOrId)
@@ -36,6 +38,37 @@ export async function dbGetUserRoles (tx, userNameOrId) {
   return tx
     .select()
     .from('usersRoles')
-    .join('roles', 'usersRoles.roleId', '=', 'roles.roleId')
+    .join('roles', 'usersRoles.roleId', 'roles.roleId')
     .where({ userId })
+}
+
+const rolesAndPermissionsCache = new NodeCache({ stdTTL: 30 })
+
+export async function dbGetRolesAndPermissions (tx) {
+  let rolesAndPermissions = rolesAndPermissionsCache.get('rolesAndPermissions')
+  if (!rolesAndPermissions) {
+    rolesAndPermissions = await tx
+      .select([
+        'r.roleId',
+        'p.permissionId',
+        'p.permission'
+      ])
+      .from('permissions as p')
+      .join('rolesPermissions as rp', 'rp.permissionId', 'p.permissionId')
+      .join('roles as r', 'r.roleId', 'rp.roleId')
+    rolesAndPermissions = _.groupBy(rolesAndPermissions, r => r.roleId)
+    rolesAndPermissionsCache.set('rolesAndPermissions', rolesAndPermissions)
+  }
+  return rolesAndPermissions
+}
+
+export async function dbGetUserRolesAndPermissions (tx, userNameOrId) {
+  const roles = await dbGetUserRoles(tx, userNameOrId)
+  const rolesAndPermissions = await dbGetRolesAndPermissions(tx)
+  const permissions = _.chain(roles)
+    .map(role => rolesAndPermissions[role.roleId].map(p => p.permission))
+    .flatten()
+    .uniq()
+    .value()
+  return { roles: roles.map(role => role.roleName), permissions }
 }

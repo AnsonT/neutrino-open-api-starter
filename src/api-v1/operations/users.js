@@ -1,7 +1,7 @@
 import requestIp from 'request-ip'
 import { Query, transaction } from '../../db'
 import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbCreateLogin, dbGetLastLoginAttempts } from '../../db/users'
-import { dbAssignRole, dbGetUserRoles } from '../../db/roles'
+import { dbAssignRole, dbGetUserRolesAndPermissions } from '../../db/roles'
 import { errorResponse } from '../../utils/error'
 import config from '../../config'
 import { setJwtCookie, clearJwtCookie } from '../../utils/auth'
@@ -32,15 +32,15 @@ export async function loginUser (req, res) {
     const loginIp = requestIp.getClientIp(req)
     const { userId, success } = await dbVerifyLogin(q, userName, password, loginIp)
     let attempts = {}
-    let roles
+    let rolesAndPermissions
     if (userId) {
       dbLoginAttempt(q, userId, success, loginIp)
     }
     if (success && userId) {
       attempts = await dbGetLastLoginAttempts(q, userId)
-      roles = await dbGetUserRoles(q, userId)
-      roles = roles?.map(role => role.roleName) || undefined
-      setJwtCookie(req, res, userId, userName, roles)
+      rolesAndPermissions = await dbGetUserRolesAndPermissions(q, userId)
+      // roles = roles?.map(role => role.roleName) || undefined
+      setJwtCookie(req, res, userId, userName, rolesAndPermissions)
     } else {
       clearJwtCookie(req, res)
     }
@@ -48,7 +48,7 @@ export async function loginUser (req, res) {
       userId: success ? userId : undefined,
       success,
       ...attempts,
-      roles
+      ...rolesAndPermissions
     })
   } catch (e) {
     errorResponse(res, e)

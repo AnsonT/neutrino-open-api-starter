@@ -2,10 +2,10 @@ import jwt from 'jsonwebtoken'
 import _ from 'lodash'
 import config from '../config'
 
-export function setJwtCookie (req, res, userId, userName, roles) {
+export function setJwtCookie (req, res, userId, userName, rolesAndPermissions) {
   const claims = {
     userName: userName.toLowerCase(),
-    roles
+    ...rolesAndPermissions
   }
   const options = {
     expiresIn: config.auth.jwtExpiresIn,

@@ -49,9 +49,23 @@ exports.up = async function (knex) {
     table.datetime('verifiedAt')
     table.foreign('userId').references('userId').inTable('users')
   })
+  await knex.schema.createTable('permissions', (table) => {
+    table.uuid('permissionId').primary().notNullable()
+    table.string('permission', 64).notNullable()
+    table.string('description', 256)
+    table.datetime('createdAt')
+  })
+  await knex.schema.createTable('rolesPermissions', (table) => {
+    table.uuid('roleId')
+    table.uuid('permissionId')
+    table.foreign('roleId').references('roleId').inTable('roles')
+    table.foreign('permissionId').references('permissionId').inTable('permissions')
+  })
 }
 
 exports.down = async function (knex) {
+  await knex.schema.dropTableIfExists('rolesPermissions')
+  await knex.schema.dropTableIfExists('permissions')
   await knex.schema.dropTableIfExists('emailVerifications')
   await knex.schema.dropTableIfExists('usersRoles')
   await knex.schema.dropTableIfExists('roles')
