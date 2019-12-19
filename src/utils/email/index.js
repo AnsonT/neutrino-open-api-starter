@@ -58,3 +58,10 @@ export async function sendMail (message) {
   }
   return info
 }
+/*
+  const result = await sendMail({
+    to: 'someone@example.com',
+    subject: 'Blah Blah',
+    text: 'Whatever'
+  })
+*/
