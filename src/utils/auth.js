@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import _ from 'lodash'
 import config from '../config'
-import { HttpError } from './error'
+import { HttpUnauthenticated, HttpUnauthorized } from './error'
 
 export function setJwtCookie (req, res, userId, userName, rolesAndPermissions) {
   const claims = {
@@ -67,7 +67,10 @@ export function hasPermissions (req, permissions) {
 }
 
 export function assertPermissions (req, permissions) {
+  if (!req.auth?.userId) {
+    throw new HttpUnauthenticated()
+  }
   if (!hasPermissions(req, 'usersViewer')) {
-    throw new HttpError(403, { code: 'FORBIDDEN' })
+    throw new HttpUnauthorized()
   }
 }

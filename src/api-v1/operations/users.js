@@ -2,9 +2,9 @@ import requestIp from 'request-ip'
 import { Query, transaction } from '../../db'
 import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbCreateLogin, dbGetLastLoginAttempts } from '../../db/users'
 import { dbAssignRole, dbGetUserRolesAndPermissions } from '../../db/roles'
-import { errorResponse, HttpError } from '../../utils/error'
+import { errorResponse, HttpNotFound, HttpUnauthorized } from '../../utils/error'
 import config from '../../config'
-import { setJwtCookie, clearJwtCookie, hasPermissions, assertPermissions } from '../../utils/auth'
+import { setJwtCookie, clearJwtCookie, assertPermissions } from '../../utils/auth'
 import { dbRequestEmailVerification, dbVerifyEmail } from '../../db/email'
 
 export async function registerUser (req, res) {
@@ -65,7 +65,7 @@ export async function changePassword (req, res) {
       res.send({ success: true })
     } else {
       userId && dbLoginAttempt(q, userId, false, loginIp)
-      res.status(401).send('Not authorized')
+      throw new HttpUnauthorized()
     }
   } catch (e) {
     errorResponse(res, e)
@@ -111,7 +111,7 @@ export async function verifyEmail (req, res) {
     const q = new Query()
     const { success } = await dbVerifyEmail(q, verificationId)
     if (!success) {
-      return res.status(404).send('NOTFOUND')
+      throw new HttpNotFound()
     }
     return res.send({ success })
   } catch (e) {
