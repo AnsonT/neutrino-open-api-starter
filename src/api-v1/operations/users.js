@@ -2,10 +2,9 @@ import requestIp from 'request-ip'
 import { Query, transaction } from '../../db'
 import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbCreateLogin, dbGetLastLoginAttempts } from '../../db/users'
 import { dbAssignRole, dbGetUserRolesAndPermissions } from '../../db/roles'
-import { errorResponse } from '../../utils/error'
+import { errorResponse, HttpError } from '../../utils/error'
 import config from '../../config'
-import { setJwtCookie, clearJwtCookie } from '../../utils/auth'
-import { sendMail } from '../../utils/email'
+import { setJwtCookie, clearJwtCookie, hasPermissions, assertPermissions } from '../../utils/auth'
 import { dbRequestEmailVerification, dbVerifyEmail } from '../../db/email'
 
 export async function registerUser (req, res) {
@@ -83,12 +82,8 @@ export async function getUser (req, res) {
 
 export async function getUsers (req, res) {
   try {
-    const result = await sendMail({
-      to: 'tsaoa@acm.org',
-      subject: 'Blah Blah',
-      text: 'Whatever'
-    })
-    res.send(result)
+    assertPermissions(req, 'usersViewer')
+    res.send('OK')
   } catch (e) {
     errorResponse(res, e)
   }
