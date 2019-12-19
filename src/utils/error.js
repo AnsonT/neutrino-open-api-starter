@@ -37,6 +37,7 @@ export function errorResponse (res, error) {
   if (error instanceof HttpError ||
     error.message || error.code) {
     return res.status(error.status || 422).send({
+      success: (error.status >= 200 && error.status <= 299),
       errno: error.errno,
       code: error.code,
       status: error.status,

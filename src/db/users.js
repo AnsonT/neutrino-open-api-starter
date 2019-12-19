@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import uuid from 'uuid/v4'
 import bcrypt from 'bcryptjs'
 import isUUID from 'is-uuid'
@@ -90,6 +91,24 @@ export async function dbGetUser (tx, userNameOrId) {
     .from('users')
     .where(where)
     .first()
+}
+
+export async function dbGetUsers (tx, offset = 0, limit = 20) {
+  const totalCount = await tx
+    .select()
+    .from('users')
+    .count()
+  const users = await tx
+    .select()
+    .from('users')
+    .offset(offset)
+    .limit(limit)
+  return {
+    offset,
+    limit,
+    total: parseInt(_.get(totalCount, [0, 'count'], 0)),
+    users
+  }
 }
 
 export async function dbDeleteUser (tx, userNameOrId) {

@@ -1,6 +1,6 @@
 @host=http://example.localhost:3000
 ###
-{{host}}/api/v1/users
+{{host}}/api/v1/users?limit=100&offset=10
 
 ###
 POST {{host}}/api/v1/users
@@ -27,8 +27,8 @@ Content-Type: application/json
 
 {
   "userName": "AnsonT",
-  "oldPassword": "password",
-  "newPassword": "password2"
+  "oldPassword": "password2",
+  "newPassword": "password"
 }
 
 ###

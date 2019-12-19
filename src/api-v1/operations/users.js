@@ -1,6 +1,6 @@
 import requestIp from 'request-ip'
 import { Query, transaction } from '../../db'
-import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbCreateLogin, dbGetLastLoginAttempts } from '../../db/users'
+import { dbCreateUser, dbVerifyLogin, dbLoginAttempt, dbCreateLogin, dbGetLastLoginAttempts, dbGetUsers } from '../../db/users'
 import { dbAssignRole, dbGetUserRolesAndPermissions } from '../../db/roles'
 import { errorResponse, HttpNotFound, HttpUnauthorized } from '../../utils/error'
 import config from '../../config'
@@ -84,7 +84,10 @@ export async function getUser (req, res) {
 export async function getUsers (req, res) {
   try {
     assertPermissions(req, 'usersViewer')
-    res.send('OK')
+    const q = new Query()
+    const { offset = 0, limit = 20 } = req.query
+    const users = await dbGetUsers(q, parseInt(offset), parseInt(limit))
+    res.send(users)
   } catch (e) {
     errorResponse(res, e)
   }

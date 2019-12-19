@@ -22,6 +22,11 @@ paths:
   /email/verify/{verificationId}:
     get:
       operationId: verifyEmail
+      parameters:
+      - in: path
+        name: verificationId
+        type: string
+        required: true
       responses:
         200:
           description: OK
@@ -30,6 +35,17 @@ paths:
   /users:
     get:
       operationId: getUsers
+      parameters:
+        - in: query
+          name: offset
+          type: string
+          format: integer
+          default: 0
+        - in: query
+          name: limit
+          type: string
+          format: integer
+          default: 20
       responses:
         200:
           description: OK
