@@ -70,7 +70,6 @@ export async function dbGetUserRolesAndPermissions (tx, userNameOrId) {
     .flatten()
     .compact()
     .uniq()
-    .compact()
     .value()
   return { roles: roles.map(role => role.roleName), permissions }
 }
