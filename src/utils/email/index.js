@@ -52,16 +52,9 @@ async function emailTransporter () {
 export async function sendMail (message) {
   const transporter = await emailTransporter()
   const info = await transporter.sendMail(message)
-  if (config.email.smtpHost === 'test') {
-    console.log('Email Preview: %s',
+  if (config.email.service === 'test') {
+    console.info('Email Preview: %s',
       nodeMailer.getTestMessageUrl(info))
   }
   return info
 }
-/*
-  const result = await sendMail({
-    to: 'someone@example.com',
-    subject: 'Blah Blah',
-    text: 'Whatever'
-  })
-*/
